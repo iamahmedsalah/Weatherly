@@ -6,12 +6,35 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container:{
+      padding:{
+        DEFAULT: '15px',
+      }
+    },
+    screens:{
+      sm: '440px',
+      md: '768px',
+      lg: '960px',
+      xl: '1200px',
+    },
     extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      colors:{
+
       },
+      animation:{
+
+      },
+      fontFamily: {
+        'ubuntu-mono': ['var(--font-ubuntu-mono)'],
+      },
+      backgroundImage: {
+        
+      },
+    },
+  },
+  container:{
+    padding:{
+      DEFAULT: '15px',
     },
   },
   plugins: [],
