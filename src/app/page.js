@@ -20,7 +20,7 @@ const Home = () => {
   const [location, setLocation] = useState('');
   const [weather, setWeather] = useState('');
 
-  const API_URL = 'http://api.weatherapi.com/v1/forecast.json?key=' + process.env.weatherApiKey + '&aqi=yes&days=3&q=' + location
+  const API_URL = 'https://api.weatherapi.com/v1/forecast.json?key=' + process.env.weatherApiKey + '&aqi=yes&days=3&q=' + location
 
   // const [isVisible, setIsVisible] = useState(false);;
 
