@@ -5,7 +5,7 @@
 - [Tailwindcss](https://tailwindcss.com/)
 - [framer-motion] (https://www.framer.com/motion/)
 - [WeatherApi] (https://www.weatherapi.com/)
-- [React icon], other free icons assets (https://react-icons.github.io/react-icons/)
+- [React icons], other free icons assets (https://react-icons.github.io/react-icons/)
 - [react-tsparticles] (https://particles.js.org/)
 
 ## Ui 
