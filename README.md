@@ -1,8 +1,8 @@
 ## WeatherApi Project
 *Weather simple website tracking my progress - Project fetch api*
 > technology
-- [Next.js ](https://nextjs.org/)
-- [Tailwindcss](https://tailwindcss.com/)
+- [Next.js ] (https://nextjs.org/)
+- [Tailwindcss] (https://tailwindcss.com/)
 - [framer-motion] (https://www.framer.com/motion/)
 - [WeatherApi] (https://www.weatherapi.com/)
 - [React icons], other free icons assets (https://react-icons.github.io/react-icons/)
