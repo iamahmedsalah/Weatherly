@@ -8,10 +8,12 @@
 - [React icons], other free icons assets (https://react-icons.github.io/react-icons/)
 - [react-tsparticles] (https://particles.js.org/)
 
-## Ui 
-[Current Weather](https://github.com/iamahmedsalah/Weatherly/assets/94718337/d5590f8b-b1f6-443e-b284-382059915035)
+## Ui
+- Current weather
+![Current Weather](https://github.com/iamahmedsalah/Weatherly/assets/94718337/d5590f8b-b1f6-443e-b284-382059915035)
 
-[3-days forecast](https://github.com/iamahmedsalah/Weatherly/assets/94718337/0ad59f11-7cb5-4a4a-bad2-33f1ea3312da)
+- 3-day's forecast
+![3-days forecast](https://github.com/iamahmedsalah/Weatherly/assets/94718337/0ad59f11-7cb5-4a4a-bad2-33f1ea3312da)
 
 
 ## Deploy on Vercel
