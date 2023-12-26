@@ -10,9 +10,14 @@
 
 ## Ui
 - Current weather
-![Current Weather](https://github.com/iamahmedsalah/Weatherly/assets/94718337/d5590f8b-b1f6-443e-b284-382059915035)
+  
+  
+![292788597-d5590f8b-b1f6-443e-b284-382059915035](https://github.com/iamahmedsalah/Weatherly/assets/94718337/703c95f7-41ea-4b3e-9919-09b509f7f75f)
+
 
 - 3-day's forecast
+
+- 
 ![3-days forecast](https://github.com/iamahmedsalah/Weatherly/assets/94718337/0ad59f11-7cb5-4a4a-bad2-33f1ea3312da)
 
 
