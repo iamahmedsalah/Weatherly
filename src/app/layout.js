@@ -49,7 +49,7 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="/images/favicon.ico" sizes="64px" />
       </head>
-      <body className={`${myFont.variable} font-ubuntu-mono`}  >
+      <body className={`${myFont.variable} font-ubuntu-mono bg-black/10` }  >
         {/* Particles */}
         <ParticlesContainer/>
         {/* Nav Head  */}

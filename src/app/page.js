@@ -1,425 +1,303 @@
-'use client';
+﻿'use client';
 
 import Image from 'next/image';
-
-// Framer motion
-import { motion } from 'framer-motion';
-//useState useEffect
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-// Variants
 import { showIn } from '../../variants';
-// React icons
 import { FcSearch } from "react-icons/fc";
+import { MdMyLocation } from "react-icons/md";
+import ParticlesContainer from '../components/ParticlesContainer';
 
 
 
 
 
 const Home = () => {
-
   const [location, setLocation] = useState('');
-  const [weather, setWeather] = useState('');
+  const [weatherData, setWeatherData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [showForecast, setShowForecast] = useState(false);
+  const [particleConfig, setParticleConfig] = useState('default');
 
-  const API_URL = 'https://api.weatherapi.com/v1/forecast.json?key=' + process.env.weatherApiKey + '&aqi=yes&days=3&q=' + location
-
-  // const [isVisible, setIsVisible] = useState(false);;
-
-  // const handleClick = e => {
-  //   // 👇️ toggle shown state
-  //   setIsVisible(current => !current);
-  // };
-
-
-  const fetchWeather = async () => {
-
-
-
-    if (location) {
-      try {
-        const res = await fetch(API_URL)
-        const data = await res.json()
-        if (data) {
-          // console.log(data)
-          // Weather Data
-          const apiData = {
-            country: data.location.country,
-            region: data.location.region,
-            city: data.location.name,
-            time: data.location.localtime,
-            feellikeC: data.current.feelslike_c,
-            tempC: data.current.temp_c,
-            windKph: data.current.wind_kph,
-            visibilityKm: data.current.vis_km,
-            gust: data.current.gust_kph,
-            humidity: data.current.humidity,
-            condition: data.current.condition.text,
-            img: data.current.condition.icon,
-          }
-          // Air Quality Index
-          const aqi = data.current.air_quality
-          const aqiData = Object.values(aqi)
-          const epa = aqiData[6]
-          let epaAqi = ''
-          switch (epa) {
-            case 1:
-              if (epa === 1) {
-                epaAqi = 'Good'
-                // console.log('Good')
-              }
-              break;
-            case 2:
-              if (epa === 2) {
-                epaAqi = 'Moderate'
-                // console.log('Moderate')
-              }
-              break;
-            case 3:
-              if (epa === 3) {
-                epaAqi = 'Sensitive Groups'
-                // console.log('Sensitive Groups')
-              }
-              break;
-            case 4:
-              if (epa === 4) {
-                epaAqi = 'Unhealthy'
-                // console.log('Unhealthy')
-              }
-              break;
-            case 5:
-              if (epa === 5) {
-                epaAqi = 'Very Unhealthy'
-                // console.log('Very Unhealthy')
-              }
-              break;
-            case 6:
-              if (epa === 6) {
-                epaAqi = 'Hazardous'
-                // console.log('Hazardous')
-              }
-              break;
-            default:
-              break;
-          }
-          // console.log(aqiData)
-          setWeather(<>
-            <motion.div className='rounded-[31px] mt-10 mx-5 transition-all duration-150'
-              variants={showIn(0.2)}
-              initial='hidden'
-              animate='show'
-              exit='hidden'>
-              <div className='flex flex-col items-center shadow-xl h-[300px] w-[300px] 
-            bg-[#29a1c6]/10 rounded-[29px] outline outline-offset-2 outline-[#29a1c6]/10'>
-                <div className='flex flex-col items-center justify-center pt-3 '>
-                  <div className='flex flex-col items-center mb-5 font-bold'>
-                    <p className='text-[20px] space'>{apiData.city}</p>
-                    <small> {apiData.region} / {apiData.country}  </small>
-                  </div>
-                  <div className='mb-3 flex flex-row '>
-                    <img className='' src={apiData.img} alt="weatherImg" width={64} height={64} />
-                    <div className='flex flex-col items-center'>
-                      <p className='font-bold text-[30px] text-black/70 ms-10'>{apiData.tempC}° </p>
-                      <p className='ms-4 text-center'>{apiData.condition}</p>
-                    </div>
-                  </div>
-                  <div>
-                    <p className='text-center'> feels like: {apiData.feellikeC}° </p>
-                    <div className='flex flex-row items-center justify-center mb-3'>
-                      <img className='px-2' src="/images/aqi.png" alt="AQI"  />
-                      <p className='text-center'> AQI: {epaAqi} </p>
-                    </div>
-                    <div className='grid grid-cols-4 gap-7 text-center items-center justify-center'>
-                      <div className='grid grid-col justify-center'>
-                        <img src="/images/wind-icon.png" alt="windicon" />
-                        {apiData.windKph} <small> Km/h</small>
-                      </div>
-                      <div className='grid grid-col justify-center'>
-                        <img src="/images/gust-icon.png" alt="gusticon" />
-                        {apiData.gust}<small>Km/h</small>
-                      </div>
-                      <div className='grid grid-col justify-center'>
-                        <img src="/images/water-icon.png" alt="humidityicon" />
-                        {apiData.humidity} <small>%</small>
-                      </div>
-                      <div className='grid grid-col justify-center'>
-                        <img src="/images/fog-icon.png" alt="humidityicon" />
-                        {apiData.visibilityKm} <small>km/h</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </>)
-        }
-      } catch (err) {
-        console.log(err)
-        const res = await fetch(API_URL)
-        const msg = await res.json()
-        if (msg.error.code === 1006) {
-          const errMsg = msg.error.message
-          // console.log(errMsg)
-          setWeather(<>
-            <motion.div className='flex flex-col items-center justify-center mt-[80px] transition-all duration-150'
-              variants={showIn(0.2)}
-              initial='hidden'
-              animate='show'
-              exit='hidden'>
-              <div className='flex flex-col items-center justify-center'>
-                <p className='text-center text-[20px] font-bold'>{errMsg}</p>
-                <img className='mt-5' src="/images/no-results.png" alt="no result" width={64} height={64} />
-              </div>
-            </motion.div>
-          </>)
-        }
+  // Update particle configuration based on weather
+  useEffect(() => {
+    if (weatherData) {
+      const condition = weatherData.current.condition.text.toLowerCase();
+      
+      if (condition.includes('rain') || condition.includes('drizzle')) {
+        setParticleConfig('rain');
+      } else if (condition.includes('snow')) {
+        setParticleConfig('snow');
+      } else if (condition.includes('clear') || condition.includes('sunny')) {
+        setParticleConfig('sunny');
+      } else if (condition.includes('cloud')) {
+        setParticleConfig('cloudy');
+      } else {
+        setParticleConfig('default');
       }
-    } else {
-      setWeather(<>
-        <motion.div className='flex flex-col items-center justify-center mt-[80px] transition-all duration-150'
-          variants={showIn(0.2)}
-          initial='hidden'
-          animate='show'
-          exit='hidden'>
-          <div className='flex flex-col items-center justify-center'>
-            <p className='text-center text-[20px] font-bold'>Please enter a city name.</p>
-            <img className='mt-5' src="/images/location-pointer.png" alt="empty" width={64} height={64} />
-          </div>
-        </motion.div>
-      </>)
     }
-  }
+  }, [weatherData]);
 
+  const fetchWeather = async (e) => {
+    e.preventDefault();
+    if (!location) return;
 
-  const fetchForecast = async () => {
+    setLoading(true);
+    setError('');
+    setWeatherData(null);
 
-    if (location) {
-      try {
-        const res = await fetch(API_URL)
-        const data = await res.json()
-        if (data) {
-          // console.log(data)
-          // Weather Data
-          const apiData = {
-            country: data.location.country,
-            region: data.location.region,
-            city: data.location.name,
-            tempC: data.current.temp_c,
-            condition: data.current.condition.text,
-            img: data.current.condition.icon,
-          }
-          // Air Quality Index
-          // const aqi = data.current.air_quality
-          // const aqiData = Object.values(aqi)
-          // const epa = aqiData[6]
-          // let epaAqi = ''
-          // switch (epa) {
-          //   case 1:
-          //     if (epa === 1) {
-          //       epaAqi = 'Good'
-          //       // console.log('Good')
-          //     }
-          //     break;
-          //   case 2:
-          //     if (epa === 2) {
-          //       epaAqi = 'Moderate'
-          //       // console.log('Moderate')
-          //     }
-          //     break;
-          //   case 3:
-          //     if (epa === 3) {
-          //       epaAqi = 'Sensitive Groups'
-          //       // console.log('Sensitive Groups')
-          //     }
-          //     break;
-          //   case 4:
-          //     if (epa === 4) {
-          //       epaAqi = 'Unhealthy'
-          //       // console.log('Unhealthy')
-          //     }
-          //     break;
-          //   case 5:
-          //     if (epa === 5) {
-          //       epaAqi = 'Very Unhealthy'
-          //       // console.log('Very Unhealthy')
-          //     }
-          //     break;
-          //   case 6:
-          //     if (epa === 6) {
-          //       epaAqi = 'Hazardous'
-          //       // console.log('Hazardous')
-          //     }
-          //     break;
-          //   default:
-          //     break;
-          // }
-          // console.log(aqiData)
+    try {
+      const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${process.env.weatherApiKey}&aqi=yes&days=3&q=${location}`);
+      const data = await res.json();
 
-          // 3 Days Forecast
-          // Change date format
-          const forecast = data.forecast.forecastday.map((day) => ({
-            date: day.date,
-          }))
-          for (let i = 0; i < forecast.length; i++) {
-            let ele = forecast[i];
-            forecast[0].date = 'Today'
-            forecast[1].date = 'Tomorrow'
-            forecast[2].date = 'After'
-            // console.log(ele)
-          }
-          // 3 Days Forecast
-          const day1 = {
-            tempC: data.forecast.forecastday[0].day.avgtemp_c,
-            moon: data.forecast.forecastday[0].astro.moon_phase,
-            img: data.forecast.forecastday[0].day.condition.icon,
-          }
-          const day2 = {
-            tempC: data.forecast.forecastday[1].day.avgtemp_c,
-            condition: data.forecast.forecastday[1].day.condition.text,
-            img: data.forecast.forecastday[1].day.condition.icon,
-          }
-          const day3 = {
-            tempC: data.forecast.forecastday[2].day.avgtemp_c,
-            condition: data.forecast.forecastday[2].day.condition.text,
-            img: data.forecast.forecastday[2].day.condition.icon,
-          }
-          // Moon Phase
-          setWeather(<>
-            <motion.div className='rounded-[31px] mt-10 mx-5 transition-all duration-150'
-              variants={showIn(0.2)}
-              initial='hidden'
-              animate='show'
-              exit='hidden'>
-              <motion.div className='flex flex-col items-center shadow-xl h-[300px] w-[310px] 
-            bg-[#29a1c6]/10 rounded-[29px] outline outline-offset-2 outline-[#29a1c6]/10'
-                variants={showIn(0.3)}
-                initial='hidden'
-                animate='show'
-                exit='hidden'>
-                <div className='flex flex-col items-center justify-center pt-3 '>
-                  <div className='flex flex-col items-center mb-5 font-bold'>
-                    <p className='text-[20px] space'>{apiData.city}</p>
-                    <small> {apiData.region} / {apiData.country}  </small>
-                  </div>
-                  <div>
-                    <div className='mb-3 flex flex-row justify-center'>
-                      <img className='' src={apiData.img} alt="weatherImg" width={64} height={64} />
-                      <div className='flex flex-col items-center'>
-                        <p className='font-bold text-[30px] text-black/70 ms-10'>{apiData.tempC}° </p>
-                        <p className='ms-4 text-center'>{apiData.condition}</p>
-                      </div>
-                    </div>
-                    <div className='grid grid-cols-3 gap-5 items-center justify-center text-center'>
-                      <div className='grid flex-row rounded-xl px-1 items-center justify-center bg-[#29a1c6]/10 shadow-xl outline  outline-[#29a1c6]/10'>
-                        <p className='font-medium py-1'>
-                          {forecast[0].date}
-                        </p>
-                        <img className='ms-1 py-1 mb-2' src={day1.img} alt="today" width={42} />
-                        <small className='font-bold pb-2'>{day1.tempC}°</small>
-                      </div>
-                      <div className='grid flex-row rounded-xl px-1 items-center justify-center bg-[#29a1c6]/10 shadow-xl outline  outline-[#29a1c6]/10'>
-                        <p className='font-medium py-1' >
-                          {forecast[1].date}
-                        </p>
-                        <img className='ms-1 py-1 mb-2' src={day2.img} alt="today" width={42} />
-                        <small className='font-bold pb-2'>{day2.tempC}°</small>
-                      </div>
-                      <div className='grid flex-row rounded-xl  px-1 items-center justify-center bg-[#29a1c6]/10 shadow-xl outline  outline-[#29a1c6]/10'>
-                        <p className='font-medium py-1'>
-                          {forecast[2].date}
-                        </p>
-                        <img className='ms-1 py-1 mb-2' src={day3.img} alt="today" width={42} />
-                        <small className='font-bold pb-2'>{day3.tempC}°</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          </>)
-        }
-      } catch (err) {
-        console.log(err)
-        const res = await fetch(API_URL)
-        const msg = await res.json()
-        if (msg.error.code === 1006) {
-          const errMsg = msg.error.message
-          // console.log(errMsg)
-          setWeather(<>
-            <motion.div className='flex flex-col items-center justify-center mt-[80px] transition-all duration-150'
-              variants={showIn(0.2)}
-              initial='hidden'
-              animate='show'
-              exit='hidden'>
-              <div className='flex flex-col items-center justify-center'>
-                <p className='text-center text-[20px] font-bold'>{errMsg}</p>
-                <img className='mt-5' src="/images/no-results.png" alt="no result" width={64} height={64} />
-              </div>
-            </motion.div>
-          </>)
-        }
+      if (data.error) {
+        setError(data.error.message);
+      } else {
+        setWeatherData(data);
       }
-    } else {
-      setWeather(<>
-        <motion.div className='flex flex-col items-center justify-center mt-[80px] transition-all duration-150'
-          variants={showIn(0.2)}
-          initial='hidden'
-          animate='show'
-          exit='hidden'>
-          <div className='flex flex-col items-center justify-center'>
-            <p className='text-center text-[20px] font-bold'>Please enter a city name.</p>
-            <img className='mt-5' src="/images/location-pointer.png" alt="empty" width={64} height={64} />
-          </div>
-        </motion.div>
-      </>)
+    } catch (err) {
+      setError('Failed to fetch weather data');
+    } finally {
+      setLoading(false);
     }
+  };
 
-  }
+  const fetchWeatherByCoords = async (lat, lon) => {
+    setLoading(true);
+    setError('');
+    setWeatherData(null);
+
+    try {
+      const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${process.env.weatherApiKey}&aqi=yes&days=3&q=${lat},${lon}`);
+      const data = await res.json();
+
+      if (data.error) {
+        setError(data.error.message);
+      } else {
+        setWeatherData(data);
+        setLocation(data.location.name);
+      }
+    } catch (err) {
+      setError('Failed to fetch weather data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCurrentLocation = () => {
+    if (navigator.geolocation) {
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          fetchWeatherByCoords(position.coords.latitude, position.coords.longitude);
+        },
+        (err) => {
+          setError('Location access denied. Please enable location services.');
+          setLoading(false);
+        }
+      );
+    } else {
+      setError('Geolocation is not supported by your browser.');
+    }
+  };
+
+  // Helper to get AQI description
+  const getAqiDescription = (epaIndex) => {
+    const descriptions = {
+      1: 'Good',
+      2: 'Moderate',
+      3: 'Sensitive Groups',
+      4: 'Unhealthy',
+      5: 'Very Unhealthy',
+      6: 'Hazardous'
+    };
+    return descriptions[epaIndex] || 'Unknown';
+  };
 
   return (
-    <div className='flex flex-col items-center justify-center mt-2'>
-      <motion.div className='border-solid border-2 rounded-[30px] outline outline-offset-2 outline-[#29a1c6]/10
-      border-b-amber-500 border-t-[#29a1c6] border-r-[#008000] border-l-[#7f3f00]'
-        variants={showIn(2.4)}
+    <div className='flex flex-col items-center justify-center  px-4 py-8'>
+      <ParticlesContainer weatherCondition={particleConfig}/>
+      
+      <motion.div 
+        className='relative w-full max-w-md bg-white/10 backdrop-blur-md border border-white/20 shadow-xl rounded-[30px] overflow-hidden p-4 sm:p-6'
+        variants={showIn(0.2)}
         initial='hidden'
         animate='show'
       >
-        <div className="flex flex-col items-center justify-start bg-[#29a1c6]/20 rounded-[25px]
-            h-[500px] w-[350px] lg:w-[440px] md:w-[430px] sm:w-[420px] transition-all duration-150">
-          <motion.img className='mb-3 mt-3' src="/season.png" alt="seasonImg" width={64} height={64}
-            variants={showIn(2.8)}
-            initial='hidden'
-            animate='show' />
-          <div className='flex flex-row'>
-            <motion.input type="text" placeholder="Enter your city name" id='location'
+        {/* Search Bar */}
+        <form onSubmit={fetchWeather} className='mb-4 sm:mb-6'>
+          <div className='flex items-center gap-2'>
+            <input 
+              type="text" 
+              placeholder="Enter city name..." 
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className='rounded-xl bg-[#29a1c6]/10 shadow-xl py-2 px-3 focus:px-7 
-              transition-all duration-150 outline outline-offset-2 outline-[#29a1c6]/10 text-center'
-              variants={showIn(3.2)}
-              initial='hidden'
-              animate='show' />
-            <motion.button className='ms-7 rounded-xl bg-[#29a1c6]/10 shadow-xl py-1 px-1 
-                outline outline-offset-2 outline-[#29a1c6]/10' id='search'
-              onClick={fetchWeather}
-              variants={showIn(3.6)}
-              initial='hidden'
-              animate='show'>
-              <FcSearch size={30} />
-            </motion.button>
-            <motion.button
-              onClick={fetchForecast}
-              className='ms-7 rounded-xl bg-[#29a1c6]/10 shadow-xl py-1 px-1 
-                outline outline-offset-2 outline-[#29a1c6]/10'
-              variants={showIn(4)}
-              initial='hidden'
-              animate='show'>
-              <img src="/images/meteorology.png" alt="more info" width={30} />
-            </motion.button>
+              className='flex-1 rounded-full bg-white/20 border-none outline-none py-2.5 sm:py-3 px-3 sm:px-4 text-sm sm:text-base text-black placeholder-black/50 focus:ring-2 focus:ring-white/50 transition-all text-center'
+            />
           </div>
-          {weather}
-        </div>
+          
+          {/* Action Buttons */}
+          <div className='flex items-center gap-2 mt-2 sm:mt-3'>
+            <button 
+              type="submit"
+              disabled={loading}
+              className='flex-1 bg-white/20 hover:bg-white/60 rounded-full p-2.5 sm:p-3 transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 sm:gap-2'
+              title="Search"
+            >
+              {loading ? (
+                <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  <FcSearch size={18} className="sm:hidden" />
+                  <FcSearch size={20} className="hidden sm:block" />
+                  <span className='text-black text-xs sm:text-sm font-medium'>Search</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleCurrentLocation}
+              className='flex-1 bg-white/20 hover:bg-white/60 rounded-full p-2.5 sm:p-3 transition-all flex items-center justify-center gap-1.5 sm:gap-2'
+              title="Use current location"
+            >
+              <MdMyLocation size={18} className="text-blue-500 sm:hidden" />
+              <MdMyLocation size={20} className="text-blue-500 hidden sm:block" />
+              <span className='text-black text-xs sm:text-sm font-medium'>Location</span>
+            </button>
+          </div>
+        </form>
+
+        {/* Content */}
+        <AnimatePresence mode='wait'>
+          {error && (
+            <motion.div 
+              key="error"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className='flex flex-col items-center justify-center py-10'
+            >
+              <img src="/images/no-results.png" alt="error" width={64} height={64} className="mb-2" />
+              <p className='text-black text-center font-medium'>{error}</p>
+            </motion.div>
+          )}
+
+          {!weatherData && !error && !loading && (
+            <motion.div 
+              key="empty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className='flex flex-col items-center justify-center py-10 text-black/60'
+            >
+              <img src="/images/location-pointer.png" alt="location" width={64} height={64} className="mb-2" />
+              <p>Search for a city to see the weather</p>
+            </motion.div>
+          )}
+
+          {weatherData && !showForecast && (
+            <motion.div
+              key="weather"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className='text-black cursor-pointer'
+              onClick={() => setShowForecast(true)}
+              title="Click to see 3-day forecast"
+            >
+              {/* Location & Date */}
+              <div className='text-center mb-4 sm:mb-6'>
+                <h2 className='text-2xl sm:text-3xl font-bold'>{weatherData.location.name}</h2>
+                <p className='text-xs sm:text-sm opacity-80'>{weatherData.location.region}, {weatherData.location.country}</p>
+                <p className='text-xs opacity-60 mt-1'>{weatherData.location.localtime}</p>
+              </div>
+
+              {/* Main Weather */}
+              <div className='flex flex-col items-center mb-6 sm:mb-8'>
+                <div className='flex items-center justify-center gap-2 sm:gap-4'>
+                  <Image 
+                    src={`https:${weatherData.current.condition.icon}`} 
+                    alt={weatherData.current.condition.text} 
+                    width={64} 
+                    height={64} 
+                    className="drop-shadow-lg sm:w-20 sm:h-20"
+                  />
+                  <div className='text-center'>
+                    <p className='text-5xl sm:text-6xl font-bold'>{weatherData.current.temp_c}°</p>
+                    <p className='text-base sm:text-lg font-medium opacity-90'>{weatherData.current.condition.text}</p>
+                  </div>
+                </div>
+                <p className='mt-2 text-xs sm:text-sm opacity-80'>Feels like {weatherData.current.feelslike_c}°</p>
+              </div>
+
+              {/* Stats Grid */}
+              <div className='grid grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6 text-center'>
+                <div className='flex flex-col items-center'>
+                  <img src="/images/wind-icon.png" alt="wind" width={24} height={24} className="sm:w-[30px] sm:h-[30px]" />
+                  <p className='text-[10px] sm:text-xs mt-1 opacity-70'>Wind</p>
+                  <p className='font-bold text-xs sm:text-sm'>{weatherData.current.wind_kph} km/h</p>
+                </div>
+                <div className='flex flex-col items-center'>
+                  <img src="/images/gust-icon.png" alt="gust" width={24} height={24} className="sm:w-[30px] sm:h-[30px]" />
+                  <p className='text-[10px] sm:text-xs mt-1 opacity-70'>Gust</p>
+                  <p className='font-bold text-xs sm:text-sm'>{weatherData.current.gust_kph} km/h</p>
+                </div>
+                <div className='flex flex-col items-center'>
+                  <img src="/images/water-icon.png" alt="humidity" width={24} height={24} className="sm:w-[30px] sm:h-[30px]" />
+                  <p className='text-[10px] sm:text-xs mt-1 opacity-70'>Humidity</p>
+                  <p className='font-bold text-xs sm:text-sm'>{weatherData.current.humidity}%</p>
+                </div>
+                <div className='flex flex-col items-center'>
+                  <img src="/images/fog-icon.png" alt="visibility" width={24} height={24} className="sm:w-[30px] sm:h-[30px]" />
+                  <p className='text-[10px] sm:text-xs mt-1 opacity-70'>Visibility</p>
+                  <p className='font-bold text-xs sm:text-sm'>{weatherData.current.vis_km} km</p>
+                </div>
+              </div>
+
+            </motion.div>
+          )}
+
+          {/* 3-Day Forecast Toggle */}
+          {weatherData && showForecast && (
+            <motion.div
+              key='forecast'
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className='cursor-pointer'
+              onClick={() => setShowForecast(false)}
+              title="Click to toggle back to weather"
+            >
+              <h3 className='text-lg sm:text-xl font-bold text-black mb-3 sm:mb-4 text-center'>3-Day Forecast</h3>
+              <div className='space-y-2 sm:space-y-3'>
+                {weatherData.forecast.forecastday.map((day, index) => (
+                  <div key={day.date} className='flex items-center justify-between bg-white/10 rounded-2xl p-3 sm:p-4'>
+                    <div>
+                      <p className='text-xs sm:text-sm font-bold text-black'>
+                        {index === 0 ? 'Today' : index === 1 ? 'Tomorrow' : new Date(day.date).toLocaleDateString('en-US', { weekday: 'long' })}
+                      </p>
+                      <p className='text-xs text-black/60'>{new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                      <p className='text-xs text-black/70 mt-1'>{day.day.condition.text}</p>
+                    </div>
+                    <div className='flex items-center gap-3'>
+                      <Image src={`https:${day.day.condition.icon}`} alt="icon" width={48} height={48} />
+                      <div className='text-right'>
+                        <p className='text-2xl font-bold text-black'>{Math.round(day.day.avgtemp_c)}°</p>
+                        <p className='text-xs text-black/60'>{Math.round(day.day.mintemp_c)}° / {Math.round(day.day.maxtemp_c)}°</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
-  )
+  );
 };
 
 export default Home;
